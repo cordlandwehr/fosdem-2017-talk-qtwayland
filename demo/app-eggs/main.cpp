@@ -32,6 +32,7 @@ int main (int argc, char **argv)
     QGuiApplication app(argc, argv);
 
     QQuickView view;
+    view.setFlags(Qt::FramelessWindowHint);
     view.setTitle("eggs");
     view.setSource(QUrl("qrc:///Main.qml"));
     view.show();

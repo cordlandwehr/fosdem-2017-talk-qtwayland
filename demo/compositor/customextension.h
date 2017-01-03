@@ -21,21 +21,32 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
-#include <QDebug>
 
-int main (int argc, char **argv)
+#ifndef CUSTOMEXTENSION_H
+#define CUSTOMEXTENSION_H
+
+#include "wayland-util.h"
+
+#include <QtWaylandCompositor/QWaylandCompositorExtensionTemplate>
+#include <QtWaylandCompositor/QWaylandCompositor>
+#include "qwayland-server-custom.h"
+
+namespace QtWayland {
+
+class CustomExtension : public QWaylandCompositorExtensionTemplate<CustomExtension>, public QtWaylandServer::demo_extension
 {
-    QGuiApplication app(argc, argv);
+    Q_OBJECT
+public:
+    CustomExtension();
+    Q_INVOKABLE void initialize(QWaylandCompositor *compositor);
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
+signals:
+    void notificationReceived(const QString &text);
 
-    return app.exec();
+protected:
+    void demo_extension_notification(Resource *resource, const QString &text) override;
+};
+
 }
+
+#endif // CUSTOMEXTENSION_H

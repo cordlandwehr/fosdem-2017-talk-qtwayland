@@ -21,21 +21,41 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
-#include <QDebug>
+import QtQuick 2.0
+import QtWayland.Compositor 1.0
+import Fosdemdemo2017 1.0
 
-int main (int argc, char **argv)
-{
-    QGuiApplication app(argc, argv);
+WaylandCompositor {
+    id: demoCompositor
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
+    Screen {
+        id: screen
+        compositor: demoCompositor
+    }
 
-    return app.exec();
+    Component {
+        id: chromeComponent
+        ShellSurfaceItem {
+            id: chrome
+            onSurfaceDestroyed: {
+                chrome.destroy()
+            }
+        }
+    }
+
+    extensions: [
+        WlShell {
+            id: defaultShell
+            onShellSurfaceCreated: {
+                var item = chromeComponent.createObject(screen.surfaceArea, { "shellSurface": shellSurface } );
+            }
+        },
+        CustomExtension {
+            id: custom
+            onRequestReceived: {
+                //TODO use for notifications
+                console.log("Compositor received a request: \"" + text + "\", " + value)
+            }
+        }
+    ]
 }

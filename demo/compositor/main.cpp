@@ -21,21 +21,21 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
-#include <QDebug>
+#include <QtCore/QUrl>
+#include <QtCore/QDebug>
+#include <QtGui/QGuiApplication>
+#include <QtQml/QQmlApplicationEngine>
+#include <QtQml/QQmlEngine>
 
-int main (int argc, char **argv)
+#include "customextension.h"
+
+int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
+    // register custom types
+    qmlRegisterType<QtWayland::CustomExtension>("Fosdemdemo2017", 1, 0, "CustomExtension");
 
+    QQmlApplicationEngine appEngine(QUrl("qrc:///qml/Main.qml"));
     return app.exec();
 }

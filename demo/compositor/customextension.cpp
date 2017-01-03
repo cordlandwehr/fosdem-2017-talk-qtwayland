@@ -21,21 +21,26 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
+#include "customextension.h"
+#include <QWaylandSurface>
 #include <QDebug>
 
-int main (int argc, char **argv)
+namespace QtWayland {
+
+CustomExtension::CustomExtension()
 {
-    QGuiApplication app(argc, argv);
+}
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
+void CustomExtension::initialize(QWaylandCompositor *compositor)
+{
+    init(compositor->display(), 1);
+}
 
-    return app.exec();
+void CustomExtension::demo_extension_notification(Resource *resource, const QString &text)
+{
+    Q_UNUSED(resource);
+    qDebug() << "Server-side extension received a notification:" << text;
+    emit notificationReceived(text);
+}
+
 }

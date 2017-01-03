@@ -21,21 +21,49 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
-#include <QDebug>
+import QtQuick 2.0
+import QtQuick.Window 2.2
+import QtWayland.Compositor 1.0
 
-int main (int argc, char **argv)
-{
-    QGuiApplication app(argc, argv);
+WaylandOutput {
+    id: output
+    property alias surfaceArea: background
+    window: Window {
+        id: screen
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
+        property QtObject output
 
-    return app.exec();
+        width: 800
+        height: 400
+        visible: true
+
+        WaylandMouseTracker {
+            id: mouseTracker
+            anchors.fill: parent
+
+            enableWSCursor: true
+            Rectangle {
+                id: background
+                anchors.fill: parent
+                color: "darkgrey"
+            }
+            ListView {
+                id: listView
+                anchors.fill: background
+                model: background.children
+                orientation: ListView.Horizontal
+                delegate: WaylandQuickItem {
+                    surface: shellSurface.surface
+                }
+            }
+            WaylandCursorItem {
+                id: cursor
+                inputEventsEnabled: false
+                x: mouseTracker.mouseX - hotspotX
+                y: mouseTracker.mouseY - hotspotY
+
+                inputDevice: output.compositor.defaultInputDevice
+            }
+        }
+    }
 }
