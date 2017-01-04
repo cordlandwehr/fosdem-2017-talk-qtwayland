@@ -92,7 +92,7 @@
     \textbf{This talk is about the QtWayland Compositor Framework:}
     \begin{enumerate}
         \item topic is between my KDE and my professional work
-        \item it's a practical introduction how that framework can change how compositors are
+        \item practical introduction how to create your own compositor
         \item the talk shall make you eager to experiment with QtWaylandCompositor
         \item want to convince you that there is a new solution for many embedded device needs
     \end{enumerate}
@@ -108,7 +108,7 @@
 \usebackgroundtemplate{}
 
 \begin{frame}
-    {Requirements \& Consequences}
+    {Setting \& Requirements}
 
     \begin{textblock*}{.4\paperwidth}[1,0](\paperwidth,0pt)%
         \includegraphics[width=\linewidth]{kitchen-right.jpg}
@@ -125,56 +125,74 @@
             \end{itemize}
         \item animations and touch handling for changing applications
         \item seemless UI between the application windows
-        \item [$\rightarrow$] we need a Wayland compositor
+        \item [$\rightarrow$] we need a (Wayland) compositor
     \end{itemize}
     \bigskip
 
-    \emph{Yes, the above can be reached in a much simpler way, but exchanging the trivial apps with an internet radio, a navigation system etc.\ and you get what modern cars put onto their devices.}
+    \emph{Yes, the above can be reached in a much simpler way, but by exchanging the trivial apps with eg.\ internet radio, navigation system etc.\ and you get exactly what modern cars put onto their devices.}
 \end{frame}
 
 \begin{frame}
-    {Interaction Concept}
-    {Let's keep it simple for the talk}
+    {Interaction Concept for this Talk}
+    {Something your designer might come up with}
 
-    \alert{add it once demo is finished :)}
-
-\end{frame}
-
-
-\begin{frame}
-    {A System Architecture for my Kitchen Control}
-
-    \begin{textblock*}{.4\paperwidth}[1,0](.95\paperwidth,.125\paperheight)%
-        \includegraphics[width=\linewidth]{architecture.png}
-    \end{textblock*}%
-
-    \begin{description}
-        \item [apps] Qt application run on Wayland\\
-            QPA ({\tt -platform wayland}) $\rightarrow$ Qt handles everything for us
-        \item [compositor] application acting as Wayland Server
-        \item [shell] application that handles the more complex compositing logic and provides
-            standard screens (loading, dialogs\dots)
-    \end{description}
+    \begin{center}
+        \includegraphics[width=.8\paperwidth]{interactionconcept.png}
+    \end{center}
     \bigskip
 
-    Note: separating logic between the Shell and the Compositor is mostly a matter of taste
+    The remainder of the talk: how QtWayland helps to achieve this
 \end{frame}
 
 \begin{frame}
-    {Wayland Compositer by QtWayland}
-    {What it does and the new API}
+    {What was Wayland, again?}
+    {A probably much too short answer for this question.}
 
-    \textbf{The New QtWayland Compositor API}
+    \begin{textblock*}{.2\paperwidth}[1,0](0.95\paperwidth,.05\paperheight)%
+        \includegraphics[width=\linewidth]{wayland.png}
+    \end{textblock*}%
+
+    Wayland is a protocol specifying the communication between\\
+    a compositor (display server) and its clients (applications with\\
+    their windows)
+
     \begin{itemize}
-        \item possible to write a compositor in only QML
-        \item Wayland protocol extension support
-        \item multi-screen support
-        \item provides XDG-Shell and IVI-Shell interfaces
+        \item in the embedded world already established successor of X
+        \item there are several compositor implementations:
+            \begin{itemize}
+                \item Weston: the reference implementation
+                \item desktop environments: KWin, Mutter, Enlightment \dots
+                \item some propriatary compositors by device vendors
+            \end{itemize}
+        \item via protocol extensions the Wayland protocol can provide new functionality:
+            \begin{itemize}
+                \item specified in XML files, code generated via wayland-scanner
+            \end{itemize}
+        \item available shells:
+            \begin{itemize}
+                \item [wl-shell] shell protocol provided with Wayland 1.0, in particulaly for desktop use cases (resizing, positioning, \dots)
+                \item [xdg-shell] successor of wl\_shell
+                \item [ivi-shell] the automotive world protocol (IVI = in-vehicle infotainment) for window placement
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {The Qt Wayland Compositer API}
+
+    \url{http://doc.qt.io/qt-5/qtwaylandcompositor-index.html}
+
+    \begin{itemize}
+        \item possible to write a compositor in just QML\\
+            $\rightarrow$ QML is declarative language especially used for UI development on embedded devices/smartphones/touch applications
+        \item supports Qt/C++ wrapper generation for Wayland protocol extensions
+        \item supports multiple screen outputs
+        \item provides wl-shell, xdg-shell and ivi-shell protocols
         \item History:
             \begin{itemize}
-                \item since many years, there was an internal (cumbersome to use) API
+                \item since many years, there was an internal (but cumbersome to use) API
                 \item Compositor API rewritten for Qt 5.7 (tech preview)
-                \item Stable API since Qt 5.8 \alert{check if release happened until today}
+                \item Stable API since Qt 5.8 \alert{check if release happened until today :)}
             \end{itemize}
     \end{itemize}
     \medskip
@@ -184,6 +202,27 @@
         \item protocol only suited for very static settings
         \item Qt event loop handling not always well handled by off-the-shelf compositors
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Possible System Architectures for my Kitchen Control}
+
+    Components:
+    \begin{description}
+        \item [apps] Qt application running as Wayland client (with Qt: running on Wayland QPA with {\tt -platform wayland})
+        \item [compositor] application acting as Wayland Server
+        \item [shell] (optional, but IMO very reasonable) application that handles the more complex compositing logic and encapsulates all Wayland communication; eg. filters and sorts all safety relvant notifications from your applications
+    \end{description}
+    \medskip
+
+    \begin{multicols}{2}
+        \includegraphics[width=\linewidth]{architecture.png}
+        \columnbreak
+
+        \includegraphics[width=\linewidth]{architecture-shell.png}
+    \end{multicols}
+
+    Note: in this talk I will stick to the left variant
 \end{frame}
 
 \begin{frame}
@@ -204,10 +243,11 @@
     {References}
 
     \begin{itemize}
-        \item Johan's talk at QtCon 2016: structured introduction into the framework
-        \item online help
-        \item examples
-        \item \dots
+        \item Johan's ``The Qt Wayland Compositor API'' introduction talk at QtCon 2016\\
+            \url{https://conf.qtcon.org/en/qtcon/public/events/392}
+        \item Online Help\\
+            \url{http://doc.qt.io/qt-5/qtwaylandcompositor-index.html}
+        \item IRC at freenode: \#qt-lighthouse
     \end{itemize}
 \end{frame}
 
