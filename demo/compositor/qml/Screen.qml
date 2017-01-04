@@ -41,7 +41,7 @@ WaylandOutput {
             id: mouseTracker
             anchors.fill: parent
 
-            enableWSCursor: true
+            windowSystemCursorEnabled: true
             Rectangle {
                 id: background
                 anchors.fill: parent
@@ -62,7 +62,7 @@ WaylandOutput {
                 x: mouseTracker.mouseX - hotspotX
                 y: mouseTracker.mouseY - hotspotY
 
-                inputDevice: output.compositor.defaultInputDevice
+                seat: output.compositor.defaultSeat
             }
         }
     }
