@@ -40,10 +40,8 @@ WaylandOutput {
         WaylandMouseTracker {
             id: mouseTracker
             anchors.fill: parent
-
             windowSystemCursorEnabled: true
             Rectangle {
-                id: background
                 anchors.fill: parent
                 color: "darkgrey"
                 ListView {
@@ -60,11 +58,9 @@ WaylandOutput {
             }
 
             WaylandCursorItem {
-                id: cursor
                 inputEventsEnabled: false
                 x: mouseTracker.mouseX - hotspotX
                 y: mouseTracker.mouseY - hotspotY
-
                 seat: output.compositor.defaultSeat
             }
         }
