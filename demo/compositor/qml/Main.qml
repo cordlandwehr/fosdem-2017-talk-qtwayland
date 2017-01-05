@@ -39,6 +39,7 @@ WaylandCompositor {
             id: chrome
             onSurfaceDestroyed: {
                 chrome.destroy()
+                //TODO surface should be removed from list view
             }
         }
     }
@@ -46,7 +47,8 @@ WaylandCompositor {
     WlShell {
         id: defaultShell
         onWlShellSurfaceCreated: {
-            var item = chromeComponent.createObject(screen.surfaceArea, { "shellSurface": shellSurface } );
+            var item = chromeComponent.createObject(screen, { "shellSurface": shellSurface } );
+            screen.surfaceList.append(item);
         }
     }
 

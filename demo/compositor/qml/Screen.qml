@@ -27,12 +27,12 @@ import QtWayland.Compositor 1.0
 
 WaylandOutput {
     id: output
-    property alias surfaceArea: background
+    property alias surfaceList: listModel
+
+    sizeFollowsWindow: true
+
     window: Window {
         id: screen
-
-        property QtObject output
-
         width: 800
         height: 400
         visible: true
@@ -46,16 +46,19 @@ WaylandOutput {
                 id: background
                 anchors.fill: parent
                 color: "darkgrey"
-            }
-            ListView {
-                id: listView
-                anchors.fill: background
-                model: background.children
-                orientation: ListView.Horizontal
-                delegate: WaylandQuickItem {
-                    surface: shellSurface.surface
+                ListView {
+                    anchors.fill: parent
+                    model: ListModel {
+                        id: listModel
+                    }
+                    orientation: ListView.Horizontal
+                    delegate: WaylandQuickItem {
+                        surface: shellSurface.surface
+                        allowDiscardFrontBuffer: true
+                    }
                 }
             }
+
             WaylandCursorItem {
                 id: cursor
                 inputEventsEnabled: false
