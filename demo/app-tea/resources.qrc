@@ -1,5 +1,6 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>Main.qml</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>Main.qml</file>
+        <file>cup.svg</file>
+    </qresource>
 </RCC>

@@ -22,6 +22,8 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import QtQuick 2.0
+import QtQuick.Controls 2.0
+import QtQml 2.2
 
 Rectangle {
     id: root
@@ -29,17 +31,85 @@ Rectangle {
     height: 400
     color: "green"
 
-    Text {
-        anchors.centerIn: parent
-        text: "Cooking Tea Timer"
-        color: "white"
-        font.pointSize: 24
+    property real seconds: 180
+
+    Timer {
+        id: timer
+        interval: 1000
+        repeat: true
+        onTriggered: {
+            if (root.seconds <= 0) {
+                //TODO send notification
+                stop();
+            }
+            root.seconds -= 1
+        }
     }
 
-    MouseArea {
-        anchors.fill: parent
+    Image {
+        id: icon
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            topMargin: 40
+            top: parent.top
+        }
+        source: "cup.svg"
+        width: 180
+        height: 180
+    }
+
+    Row {
+        id: controls
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: icon.bottom
+            topMargin: 20
+        }
+        spacing: 40
+
+        Button {
+            id: minus
+            text: "-"
+            font.pointSize: 24
+            onClicked: {
+                root.seconds = Math.max(0, root.seconds - 15)
+            }
+        }
+
+        Text {
+            width: 60
+            anchors.verticalCenter: parent.verticalCenter
+            text: {
+                var output;
+                output = Math.floor(root.seconds / 60);
+                output += ":";
+                var seconds = (root.seconds % 60);
+                if (seconds === 0) output += "00";
+                else output += seconds;
+                return output;
+            }
+            font.pointSize: 24
+        }
+
+        Button {
+            text: "+"
+            font.pointSize: 24
+            onClicked: {
+                root.seconds += 15
+            }
+        }
+    }
+
+    Button {
+        anchors {
+            top: controls.bottom
+            topMargin: 20
+            horizontalCenter: parent.horizontalCenter
+        }
+        text: "start"
+        font.pointSize: 24
         onClicked: {
-            // TODO start timer
+            timer.start()
         }
     }
 }
