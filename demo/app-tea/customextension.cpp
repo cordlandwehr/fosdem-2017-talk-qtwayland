@@ -37,13 +37,12 @@ CustomExtension::CustomExtension()
 
 }
 
-void CustomExtension::initialize()
-{
-//     init();
-}
-
 void CustomExtension::sendNotification(const QString &text)
 {
+    if (!isInitialized()) {
+        qDebug() << "Custom Protocol not ready, aborting!";
+        return;
+    }
     qDebug() << "Client-side plugin sending request:" << text;
     notification(text);
 }

@@ -33,7 +33,6 @@ int main (int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
     QtWaylandClient::CustomExtension client;
-    client.initialize();
 
     QQuickView view;
     view.setFlags(Qt::FramelessWindowHint);

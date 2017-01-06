@@ -39,8 +39,6 @@ class CustomExtension : public QWaylandClientExtensionTemplate<CustomExtension>,
 public:
     CustomExtension();
 
-    void initialize();
-
 public slots:
     void sendNotification(const QString &text);
 };
