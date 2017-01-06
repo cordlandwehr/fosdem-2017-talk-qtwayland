@@ -87,7 +87,7 @@ Rectangle {
                 output = Math.floor(root.seconds / 60);
                 output += ":";
                 var seconds = (root.seconds % 60);
-                if (seconds <= 10) output = "0" + seconds;
+                if (seconds <= 10) output = output + "0" + seconds;
                 else output += seconds;
                 return output;
             }
