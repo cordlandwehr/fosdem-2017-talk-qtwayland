@@ -33,22 +33,10 @@ WaylandCompositor {
         compositor: demoCompositor
     }
 
-    Component {
-        id: chromeComponent
-        ShellSurfaceItem {
-            id: chrome
-            onSurfaceDestroyed: {
-                chrome.destroy()
-                //TODO surface should be removed from list view
-            }
-        }
-    }
-
     WlShell {
         id: defaultShell
         onWlShellSurfaceCreated: {
-            var item = chromeComponent.createObject(screen, { "shellSurface": shellSurface } );
-            screen.surfaceList.append(item);
+            screen.surfaceList.append({"shellSurface": shellSurface});
         }
     }
 

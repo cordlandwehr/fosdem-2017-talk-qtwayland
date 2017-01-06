@@ -49,11 +49,12 @@ WaylandOutput {
                     model: ListModel {
                         id: listModel
                     }
-
                     orientation: ListView.Horizontal
-                    delegate: WaylandQuickItem {
-                        surface: shellSurface.surface
-                        inputEventsEnabled: true
+                    delegate: ShellSurfaceItem {
+                        shellSurface: model.shellSurface
+                        onSurfaceDestroyed: {
+                            listModel.remove(index)
+                        }
                     }
                 }
             }
