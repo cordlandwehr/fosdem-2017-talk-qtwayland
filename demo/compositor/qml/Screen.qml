@@ -49,10 +49,11 @@ WaylandOutput {
                     model: ListModel {
                         id: listModel
                     }
+
                     orientation: ListView.Horizontal
                     delegate: WaylandQuickItem {
                         surface: shellSurface.surface
-                        allowDiscardFrontBuffer: true
+                        inputEventsEnabled: true
                     }
                 }
             }

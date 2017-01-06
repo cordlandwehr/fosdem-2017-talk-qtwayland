@@ -21,30 +21,33 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
+#include "customextension.h"
+#include <QtWaylandClient/private/qwaylanddisplay_p.h>
+#include <QtWaylandClient/private/qwaylandintegration_p.h>
+
 #include <QDebug>
 
-#include "customextension.h"
+QT_BEGIN_NAMESPACE
 
-int main (int argc, char **argv)
+namespace QtWaylandClient {
+
+CustomExtension::CustomExtension()
+    : QWaylandClientExtensionTemplate(/* Supported protocol version */ 1 )
 {
-    QGuiApplication app(argc, argv);
-    QtWaylandClient::CustomExtension client;
-    client.initialize();
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
-
-    // connect to QML engine
-    QObject *item = view.rootObject();
-    QObject::connect(item, SIGNAL(sendNotification(QString)),
-                     &client, SLOT(sendNotification(QString)));
-
-    return app.exec();
 }
+
+void CustomExtension::initialize()
+{
+//     init();
+}
+
+void CustomExtension::sendNotification(const QString &text)
+{
+    qDebug() << "Client-side plugin sending request:" << text;
+    notification(text);
+}
+
+}
+
+QT_END_NAMESPACE

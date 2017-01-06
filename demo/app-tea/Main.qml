@@ -33,14 +33,17 @@ Rectangle {
 
     property real seconds: 180
 
+    signal sendNotification(string msg)
+
     Timer {
         id: timer
         interval: 1000
         repeat: true
         onTriggered: {
             if (root.seconds <= 0) {
-                //TODO send notification
+                sendNotification("Tea is ready!");
                 stop();
+                return;
             }
             root.seconds -= 1
         }
@@ -84,7 +87,7 @@ Rectangle {
                 output = Math.floor(root.seconds / 60);
                 output += ":";
                 var seconds = (root.seconds % 60);
-                if (seconds === 0) output += "00";
+                if (seconds <= 10) output = "0" + seconds;
                 else output += seconds;
                 return output;
             }

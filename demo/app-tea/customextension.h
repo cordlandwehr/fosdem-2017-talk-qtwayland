@@ -21,30 +21,32 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QUrl>
-#include <QDebug>
+#ifndef CUSTOMEXTENSION_H
+#define CUSTOMEXTENSION_H
 
-#include "customextension.h"
+#include <qpa/qwindowsysteminterface.h>
+#include <QtWaylandClient/private/qwayland-wayland.h>
+#include <QtWaylandClient/qwaylandclientextension.h>
+#include "qwayland-custom.h"
 
-int main (int argc, char **argv)
+QT_BEGIN_NAMESPACE
+
+namespace QtWaylandClient {
+
+class CustomExtension : public QWaylandClientExtensionTemplate<CustomExtension>, public QtWayland::demo_extension
 {
-    QGuiApplication app(argc, argv);
-    QtWaylandClient::CustomExtension client;
-    client.initialize();
+    Q_OBJECT
+public:
+    CustomExtension();
 
-    QQuickView view;
-    view.setFlags(Qt::FramelessWindowHint);
-    view.setTitle("tea");
-    view.setSource(QUrl("qrc:///Main.qml"));
-    view.show();
+    void initialize();
 
-    // connect to QML engine
-    QObject *item = view.rootObject();
-    QObject::connect(item, SIGNAL(sendNotification(QString)),
-                     &client, SLOT(sendNotification(QString)));
+public slots:
+    void sendNotification(const QString &text);
+};
 
-    return app.exec();
 }
+
+QT_END_NAMESPACE
+
+#endif // CUSTOMEXTENSION_H
