@@ -50,16 +50,43 @@ WaylandOutput {
                 anchors.fill: parent
                 color: "darkgrey"
                 ListView {
+                    id: listView
                     anchors.fill: parent
                     model: ListModel {
                         id: listModel
                     }
                     orientation: ListView.Horizontal
+                    highlightFollowsCurrentItem: true
+                    highlightRangeMode: ListView.StrictlyEnforceRange
+                    snapMode: ListView.SnapToItem
                     delegate: ShellSurfaceItem {
                         shellSurface: model.shellSurface
                         onSurfaceDestroyed: {
                             listModel.remove(index)
                         }
+                    }
+                }
+                ListView {
+                    id: navigationInfo
+                    height: 20
+                    width: count * 20 + (count - 1) * 5
+                    anchors {
+                        bottom: parent.bottom
+                        bottomMargin: 10
+                        right: parent.right
+                        rightMargin: 10
+                    }
+                    model: listView.count
+                    spacing: 5
+                    orientation: ListView.Horizontal
+                    interactive: false
+                    delegate: Rectangle {
+                        width: 20
+                        height: 20
+                        radius: 10
+                        opacity: 0.7
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: (index === listView.currentIndex || index === listView.currentIndex + 1) ? "steelblue" : "white"
                     }
                 }
 
