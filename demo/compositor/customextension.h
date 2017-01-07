@@ -37,8 +37,8 @@ class CustomExtension : public QWaylandCompositorExtensionTemplate<CustomExtensi
 {
     Q_OBJECT
 public:
-    CustomExtension();
-    Q_INVOKABLE void initialize(QWaylandCompositor *compositor);
+    CustomExtension(QWaylandCompositor *compositor = nullptr);
+    void initialize() override;
 
 signals:
     void notificationReceived(const QString &text);

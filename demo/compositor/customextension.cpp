@@ -27,12 +27,15 @@
 
 namespace QtWayland {
 
-CustomExtension::CustomExtension()
+CustomExtension::CustomExtension(QWaylandCompositor *compositor)
+    : QWaylandCompositorExtensionTemplate(compositor)
 {
 }
 
-void CustomExtension::initialize(QWaylandCompositor *compositor)
+void CustomExtension::initialize()
 {
+    QWaylandCompositorExtensionTemplate::initialize();
+    QWaylandCompositor *compositor = static_cast<QWaylandCompositor *>(extensionContainer());
     init(compositor->display(), 1);
 }
 
