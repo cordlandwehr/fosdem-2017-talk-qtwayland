@@ -27,7 +27,7 @@
 #include <QUrl>
 #include <QDebug>
 
-#include "customextension.h"
+#include "../client-common/customextension.h"
 
 int main (int argc, char **argv)
 {

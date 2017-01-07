@@ -27,15 +27,23 @@
 #include <QUrl>
 #include <QDebug>
 
+#include "../client-common/customextension.h"
+
 int main (int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
+    QtWaylandClient::CustomExtension client;
 
     QQuickView view;
     view.setFlags(Qt::FramelessWindowHint);
     view.setTitle("eggs");
     view.setSource(QUrl("qrc:///Main.qml"));
     view.show();
+
+    // connect to QML engine
+    QObject *item = view.rootObject();
+    QObject::connect(item, SIGNAL(sendNotification(QString)),
+                     &client, SLOT(sendNotification(QString)));
 
     return app.exec();
 }

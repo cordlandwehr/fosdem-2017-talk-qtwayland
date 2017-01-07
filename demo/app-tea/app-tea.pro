@@ -14,9 +14,9 @@ QT += quick waylandclient-private
 WAYLANDCLIENTSOURCES += ../protocol/custom.xml
 
 SOURCES += main.cpp \
-    customextension.cpp
+    ../client-common/customextension.cpp
 
-HEADERS += customextension.h
+HEADERS += ../client-common/customextension.h
 
 RESOURCES = resources.qrc
 

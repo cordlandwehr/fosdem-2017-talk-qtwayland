@@ -22,6 +22,7 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import QtQuick 2.0
+import QtQuick.Controls 2.0
 
 Rectangle {
     id: root
@@ -29,17 +30,82 @@ Rectangle {
     height: 400
     color: "steelblue"
 
-    Text {
-        anchors.centerIn: parent
-        text: "Cooking Eggs Timer"
-        color: "white"
-        font.pointSize: 24
+    property real seconds: 180
+
+    signal sendNotification(string msg)
+
+    Timer {
+        id: timer
+        interval: 1000
+        repeat: true
+        onTriggered: {
+            if (root.seconds <= 0) {
+                sendNotification("Egg is ready!");
+                stop();
+                return;
+            }
+            root.seconds -= 1
+        }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            // TODO start timer
+    Column {
+        anchors {
+            top: parent.top
+            topMargin: 80
+            left: parent.left
+            leftMargin: 30
+        }
+
+        spacing: 40
+        Button {
+            text: "5 min"
+            font.pointSize: 24
+            onClicked: {
+                root.seconds = 60 * 5
+                timer.start()
+            }
+        }
+        Button {
+            text: "7 min"
+            font.pointSize: 24
+            onClicked: {
+                root.seconds = 60 * 7
+                timer.start()
+            }
+        }
+        Button {
+            text: "9 min"
+            font.pointSize: 24
+            onClicked: {
+                root.seconds = 60 * 9
+                timer.start()
+            }
+        }
+    }
+
+    Image {
+        anchors {
+            right: parent.right
+            rightMargin: 40
+            verticalCenter: parent.verticalCenter
+        }
+
+        width: 150
+        height: 150
+        source: "egg.svg"
+
+        Text {
+            anchors.centerIn: parent
+            text: {
+                var output;
+                output = Math.floor(root.seconds / 60);
+                output += ":";
+                var seconds = (root.seconds % 60);
+                if (seconds < 10) output = output + "0" + seconds;
+                else output += seconds;
+                return output;
+            }
+            font.pointSize: 24
         }
     }
 }
