@@ -27,24 +27,19 @@ import Fosdemdemo2017 1.0
 
 WaylandCompositor {
     id: demoCompositor
-
     Screen {
         id: screen
         compositor: demoCompositor
     }
-
     WlShell {
         id: defaultShell
         onWlShellSurfaceCreated: {
             screen.surfaceList.append({"shellSurface": shellSurface});
         }
     }
-
     CustomExtension {
-        id: custom
         onNotificationReceived: {
-            //TODO use for notifications
-            console.log("Compositor received a notification: \"" + text)
+            screen.showNotification(text)
         }
     }
 }

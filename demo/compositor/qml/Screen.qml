@@ -28,6 +28,11 @@ import QtWayland.Compositor 1.0
 WaylandOutput {
     id: output
     property alias surfaceList: listModel
+    function showNotification(message) {
+        notificationText.text = message
+        notificationArea.visible = true
+        notificationTimer.start()
+    }
 
     sizeFollowsWindow: true
 
@@ -55,6 +60,25 @@ WaylandOutput {
                         onSurfaceDestroyed: {
                             listModel.remove(index)
                         }
+                    }
+                }
+
+                Rectangle {
+                    id: notificationArea
+                    width: parent.width
+                    height: 0.33 * parent.height
+                    color: "#ffecc8"
+                    opacity: 0.7
+                    visible: false
+                    Text {
+                        id: notificationText
+                        anchors.centerIn: parent
+                        font.pointSize: 24
+                    }
+                    Timer {
+                        id: notificationTimer
+                        interval: 3000 // 3 seconds
+                        onTriggered: notificationArea.visible = false
                     }
                 }
             }
