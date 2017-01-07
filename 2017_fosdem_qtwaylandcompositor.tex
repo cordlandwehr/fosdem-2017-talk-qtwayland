@@ -208,7 +208,7 @@
 \begin{frame}
     {Possible System Architectures for my Kitchen Control}
 
-    Components:
+    \textbf{Components:}
     \begin{description}
         \item [apps] Qt application running as Wayland client (with Qt: running on Wayland QPA with {\tt -platform wayland})
         \item [compositor] application acting as Wayland Server
@@ -226,19 +226,141 @@
     Note: in this talk I will stick to the left variant
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}
     {One-Slide Wayland Compositor}
     \vspace{-1em}
     \includegraphics[height=.8\paperheight]{OneSlideCompositor.png}
 \end{frame}
 
-\begin{frame}
-    {Protocol Extension for Alarm Notifications}
-    \alert{copy from demo}
+\begin{frame}[fragile]
+    {Essential Components (1/2)}
+    {The Compositor and the Shell}
+
+    \vspace{-1em}
+    \begin{lstlisting}
+WaylandCompositor {
+    WaylandOutput { ... }
+    WlShell {
+        onWlShellSurfaceCreated: {
+            // handle shellSurface object
+            listModel.append({"shellSurface": shellSurface});
+        }
+    }
+}
+    \end{lstlisting}
+    \vspace{-1em}
+
+    \textbf{WaylandCompositor}
+    \begin{itemize}
+        \item representation of the compositor
+        \item usually the root object of the scene
+        \item always should have output and shell extension
+    \end{itemize}
+    \smallskip
+
+    \textbf{Shell Extension}
+    \begin{itemize}
+        \item the protocol interface that gives access to the surfaces
+        \item WlShell and XdgShell are supported
+        \item handle the \texttt{onWlSurfaceCreated()} signal
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    {Essential Components (2/2)}
+    {Output and Surface Items}
+
+    \vspace{-1em}
+    \begin{lstlisting}
+WaylandOutput {
+    compositor: demoCompositor
+    sizeFollowsWindow: true
+    window: Window {
+        width: 800; height: 400; visible: true
+        ListView {
+            anchors.fill: parent
+            model: ListModel { id: listModel }
+            orientation: ListView.Horizontal
+            delegate: ShellSurfaceItem {
+                shellSurface: model.shellSurface
+                onSurfaceDestroyed: { listModel.remove(index) }
+}   }   }   }
+    \end{lstlisting}
+    \vspace{-1em}
+
+    \textbf{ShellSurfaceItem and QWaylandQuickItem}
+    \begin{itemize}
+        \item wrapper around shell surfaces to handle them like ordinary QtQuick Items
+        \item visibility and input behavior follows typical QtQuick mechanisms
+    \end{itemize}
+    \smallskip
+
+    \textbf{Output}
+    \begin{itemize}
+        \item manages rectangular output region in which content can be shown
+        \item compositor can have multiple outputs
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    {Protocol Extension for Alarm Notifications (1/2)}
+    {How to add your own custom Wayland protocol?}
+
+    \textbf{Code:}\ {\small \url{https://github.com/cordlandwehr/fosdem-2017-talk-qtwayland/tree/master/demo}}
+    \bigskip
+
+    \textbf{The Custom Protocol Extension}
+\begin{lstlisting}[language=Xml]
+<protocol>
+    <interface name="demo_extension" version="1">
+
+        <request name="notification">
+          <description summary="Example Notification Event">
+            Example request from client to server
+          </description>
+
+          <arg name="text" type="string"/>
+        </request>
+    </interface>
+</protocol>
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    {Protocol Extension for Alarm Notifications (1/2)}
+    {How to add your own custom Wayland protocol?}
+
+    \textbf{On the Compositor Side}
+    \begin{enumerate}
+        \item create QWaylandCompositorExtensionTemplate derived protocol wrapper
+        \item use qtwayland-scanner to generate Qt \& C binding classes for protocol
+        \item add CustomExtension in the WaylandCompositor element in the QtQuick context and connect to signals/use methods for sending data
+    \end{enumerate}
+    \medskip
+
+    \textbf{On the Client (Application) Side}
+    \begin{enumerate}
+        \item create QWaylandClientExtensionTemplate derived protocol wrapper
+        \item use qtwayland-scanner to generate Qt \& C binding classes for protocol
+        \item create client protocol wrapper instance and use it
+    \end{enumerate}
+
 \end{frame}
 
 \begin{frame}
     {Demo}
+    {Everything put together with some QtQuick UI sugar}
+\end{frame}
+
+\begin{frame}
+    {Conclusion}
+
+    \begin{itemize}
+        \item the taks of creating a compositor for an embedded device is drastically simplified
+        \item prototyping a compositor and testing its interaction is a matter of more a matter of days than of weeks/months
+        \item compositor animations and interactions can now be done by ``any'' QtQuick UI developer
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
