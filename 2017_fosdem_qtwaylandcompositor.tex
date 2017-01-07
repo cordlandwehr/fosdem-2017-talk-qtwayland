@@ -6,6 +6,7 @@
 \usepackage[utf8x]{inputenc} % Set input encoding to UTF-8.
 \usepackage[english]{babel} % Set language.
 \usepackage{nicefrac}
+\usepackage{courier}
 
 % activate KDE theme
 \usepackage{KDE/beamerthemeKDE}
@@ -24,7 +25,7 @@
 % % %
 
 \lstset{ %
-  language=C,
+  language=C++,
   backgroundcolor=\color{KDEgray4},
   basicstyle=\footnotesize\ttfamily,
   breakatwhitespace=false,
@@ -225,9 +226,10 @@
     Note: in this talk I will stick to the left variant
 \end{frame}
 
-\begin{frame}
-    {A Wayland Compositor on One Slide}
-    \alert{copy from demo}
+\begin{frame}[fragile]
+    {One-Slide Wayland Compositor}
+    \vspace{-1em}
+    \includegraphics[height=.8\paperheight]{OneSlideCompositor.png}
 \end{frame}
 
 \begin{frame}

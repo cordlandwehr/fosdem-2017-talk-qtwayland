@@ -27,6 +27,7 @@ import Fosdemdemo2017 1.0
 
 WaylandCompositor {
     id: demoCompositor
+
     Screen {
         id: screen
         compositor: demoCompositor
