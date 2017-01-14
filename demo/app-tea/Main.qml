@@ -29,7 +29,7 @@ Rectangle {
     id: root
     width: 400
     height: 400
-    color: "green"
+    color: "#1abc9c"
 
     property real seconds: 180
 

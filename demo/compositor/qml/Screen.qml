@@ -94,7 +94,7 @@ WaylandOutput {
                     id: notificationArea
                     width: parent.width
                     height: 0.33 * parent.height
-                    color: "#ffecc8"
+                    color: "#3daee9"
                     opacity: 0.7
                     visible: false
                     Text {

@@ -86,7 +86,7 @@
         \item IRC-nick: CoLa
         \item KDE developer since $\approx$ 2010
         \item did PhD in algorithmic game theory\\ at Paderborn University \hspace{2.5cm}$\nearrow$
-        \item now working as developer at CLAAS E-Systems in department for displays and operator panels for big agriculture machinery
+        \item now working as developer at CLAAS E-Systems in department for displays and operator panels for big agriculture machines
     \end{itemize}
     \bigskip
 
@@ -94,7 +94,7 @@
     \begin{enumerate}
         \item topic is between my KDE and my professional work
         \item practical introduction how to create your own compositor
-        \item the talk shall make you eager to experiment with QtWaylandCompositor
+        \item the talk shall make you eager to experiment with the QtWaylandCompositor
         \item want to convince you that there is a new solution for many embedded device needs
     \end{enumerate}
 \end{frame}
@@ -104,7 +104,7 @@
 
 \begin{frame}
     {The Red Thread}
-    {Consider an embedded device for my kitchen\dots}
+    {Let's say, I need a terminal for helping me in the kitchen\dots}
 \end{frame}
 \usebackgroundtemplate{}
 
@@ -116,25 +116,29 @@
     \end{textblock*}%
 
     \begin{itemize}
-        \item powerful Linux based device with\\
-            3D acceleration (e.g. Raspberry Pi)
-        \item multi-application device:
+        \item several applications shall run on the device
             \begin{itemize}
-                \item cooking eggs timer
-                \item tea timer
-                \item a game
+                \item cooking eggs timer app
+                \item tea timer app
+                \item current time app
             \end{itemize}
-        \item animations and touch handling for changing applications
         \item seemless UI between the application windows
-        \item [$\rightarrow$] we need a (Wayland) compositor
+        \item swipe animation for switching applications
+        \item want to use a standard embedded Linux based device with\\
+            3D acceleration (e.g. Raspberry Pi)
     \end{itemize}
-    \bigskip
 
-    \emph{Yes, the above can be reached in a much simpler way, but by exchanging the trivial apps with eg.\ internet radio, navigation system etc.\ and you get exactly what modern cars put onto their devices.}
+    \begin{itemize}
+        \item [$\rightarrow$] we need a (Wayland) compositor
+        \item [$\rightarrow$] we can use QtQuick
+    \end{itemize}
+    \vfill
+
+    \emph{Yes, the above can be achieved in a much simpler way, but by exchanging these trivial apps with eg.\ internet radio, navigation system etc.\ and you get exactly what modern cars put onto their devices today.}
 \end{frame}
 
 \begin{frame}
-    {Interaction Concept for this Talk}
+    {Interaction Concept for the Kitchen Device}
     {Something your designer might come up with}
 
     \begin{center}
@@ -142,12 +146,12 @@
     \end{center}
     \bigskip
 
-    The remainder of the talk: how QtWayland helps to achieve this
+    The remainder of the talk: how QtWayland helps to build this
 \end{frame}
 
 \begin{frame}
-    {What was Wayland, again?}
-    {A probably much too short answer for this question.}
+    {What is Wayland, again?}
+    {A much too short answer for this question.}
 
     \begin{textblock*}{.2\paperwidth}[1,0](0.95\paperwidth,.05\paperheight)%
         \includegraphics[width=\linewidth]{wayland.png}
@@ -158,22 +162,22 @@
     their windows)
 
     \begin{itemize}
-        \item in the embedded world already established successor of X
-        \item there are several compositor implementations:
+        \item in the embedded world, Wayland is the already established successor of X
+        \item there are several Wayland compositor implementations:
             \begin{itemize}
                 \item Weston: the reference implementation
-                \item desktop environments: KWin, Mutter, Enlightment \dots
-                \item some propriatary compositors by device vendors
+                \item for desktop environments: KWin, Mutter, Enlightment \dots
+                \item some propriatary compositors by device vendors exist
             \end{itemize}
-        \item via protocol extensions the Wayland protocol can provide new functionality:
+        \item protocol extensions add further functionaly to the Wayland protocol:
             \begin{itemize}
                 \item specified in XML files, code generated via wayland-scanner
             \end{itemize}
         \item available shells:
             \begin{itemize}
-                \item [wl-shell] shell protocol provided with Wayland 1.0, in particulaly for desktop use cases (resizing, positioning, \dots)
-                \item [xdg-shell] successor of wl\_shell
-                \item [ivi-shell] the automotive world protocol (IVI = in-vehicle infotainment) for window placement
+                \item [wl-shell] default protocol for window handling, already introduced with Wayland 1.0
+                \item [xdg-shell] successor of wl\_shell with implementations provided by individual compositors
+                \item [ivi-shell] protocol specifically for special automative form factors  (IVI = in-vehicle infotainment), used via the ivi-controller protocol extension
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -198,15 +202,15 @@
     \end{itemize}
     \medskip
 
-    \textbf{Alternatives:} What about using the IVI-Shell extension?
+    \textbf{Alternatives:} What about using the IVI-Shell extension in kitchen scenario?
     \begin{itemize}
         \item protocol only suited for very static settings
-        \item Qt event loop handling not always well handled by off-the-shelf compositors
+        \item touch gestures and window animations hard to implement
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    {Possible System Architectures for my Kitchen Control}
+    {Possible System Architectures for my Kitchen Device}
 
     \textbf{Components:}
     \begin{description}
@@ -268,7 +272,7 @@ WaylandCompositor {
 
 \begin{frame}[fragile]
     {Essential Components (2/2)}
-    {Output and Surface Items}
+    {The Surface Items and the Output}
 
     \vspace{-1em}
     \begin{lstlisting}
@@ -328,21 +332,21 @@ WaylandOutput {
 \end{frame}
 
 \begin{frame}[fragile]
-    {Protocol Extension for Alarm Notifications (1/2)}
+    {Protocol Extension for Alarm Notifications (2/2)}
     {How to add your own custom Wayland protocol?}
 
     \textbf{On the Compositor Side}
     \begin{enumerate}
         \item create QWaylandCompositorExtensionTemplate derived protocol wrapper
-        \item use qtwayland-scanner to generate Qt \& C binding classes for protocol
+        \item use qtwayland-scanner to generate Qt \& C++ binding classes for protocol
         \item add CustomExtension in the WaylandCompositor element in the QtQuick context and connect to signals/use methods for sending data
     \end{enumerate}
-    \medskip
+    \bigskip
 
     \textbf{On the Client (Application) Side}
     \begin{enumerate}
         \item create QWaylandClientExtensionTemplate derived protocol wrapper
-        \item use qtwayland-scanner to generate Qt \& C binding classes for protocol
+        \item use qtwayland-scanner to generate Qt \& C++ binding classes for protocol
         \item create client protocol wrapper instance and use it
     \end{enumerate}
 
@@ -350,17 +354,29 @@ WaylandOutput {
 
 \begin{frame}
     {Demo}
-    {Everything put together with some QtQuick UI sugar}
+    {Everything put together with some QtQuick UI sugar.}
+
+    \begin{center}
+        \includegraphics[width=\linewidth]{demo_screenshot.png}
+    \end{center}
 \end{frame}
 
 \begin{frame}
     {Conclusion}
 
     \begin{itemize}
-        \item the taks of creating a compositor for an embedded device is drastically simplified
-        \item prototyping a compositor and testing its interaction is a matter of more a matter of days than of weeks/months
-        \item compositor animations and interactions can now be done by ``any'' QtQuick UI developer
+        \item the QtWayland Compositor framework drastically simplifies the creation of a compositor for a specific/special UX requirement
+        \item prototyping such a compositor is just a matter of a day
+        \item window compositing becomes UI design:
+            \begin{itemize}
+                \item when a surface looks and behaves like a QtQuick item, you can handle it like a QtQuick item\dots
+                \item no special Wayland developer needed but ``just'' a QtQuick UI developer can develop your compositor tailored for your individual form factor
+            \end{itemize}
+        \item [$\rightarrow$] try it out!
     \end{itemize}
+    \vfill
+    Demo and all sources of this talk are available here:\\
+    {\small \url{https://github.com/cordlandwehr/fosdem-2017-talk-qtwayland/tree/master/demo}}
 \end{frame}
 
 \begin{frame}
